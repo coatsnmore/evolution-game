@@ -6,16 +6,19 @@ PixiGame.GameLoopController = function() {
 
 PixiGame.GameLoopController.constructor = PixiGame.GameLoopController;
 
-PixiGame.GameLoopController.prototype.update = function() {
+PixiGame.GameLoopController.prototype.tick = function() {
     if (!this._isGameActive) {
         return;
     }
 
-    //global physics things
+    requestAnimationFrame(this.tick.bind(this));
+
+    // update physics
+    PixiGame.sceneController.update();
     PixiGame.world.step(1 / this._fps);
 
+    // render
     PixiGame.renderer.render(PixiGame.stage);
-    PixiGame.sceneController.update();
 };
 
 PixiGame.GameLoopController.prototype.start = function() {
@@ -26,9 +29,10 @@ PixiGame.GameLoopController.prototype.start = function() {
     this._isGameActive = true;
 
     // Create the game loop
-    this._updateInterval = setInterval(function() {
-        this.update();
-    }.bind(this), 1000 / this._fps);
+    // this._updateInterval = setInterval(function() {
+        this.tick();
+    // }.bind(this), 1000 / this._fps);
+
 };
 
 PixiGame.GameLoopController.prototype.pause = function() {

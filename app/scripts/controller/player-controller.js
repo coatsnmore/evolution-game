@@ -3,7 +3,8 @@ PixiGame.Controller = function(Scene) {
   this._state = {
     left: false,
     right: false,
-    up: false
+    up: false,
+    fire: false
   };
   this.setupPlayerControls();
 };
@@ -34,6 +35,9 @@ PixiGame.Controller.prototype.changeControls = function(code, state){
       break;
     case 38:
       this._state.up = state;
+      break;
+    case 32:
+      this._state.fire = state;
       break;
     }
 };
