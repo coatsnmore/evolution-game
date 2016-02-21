@@ -14,3 +14,8 @@ PixiGame.gameLoopController = null;
 
 // Create a reference to the scene controller
 PixiGame.sceneController = null;
+
+// Physics
+PixiGame.world = null;
+
+PixiGame.controls = null;

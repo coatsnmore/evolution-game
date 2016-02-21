@@ -33,6 +33,7 @@ module.exports = function(grunt) {
 
     var srcFiles = [
         '<%= config.app %>/scripts/intro.js',
+        '<%= config.app %>/scripts/controller/player-controller.js',
         '<%= config.app %>/scripts/controller/game-loop-controller.js',
         '<%= config.app %>/scripts/controller/scene-controller.js',
         '<%= config.app %>/scripts/scene/main-menu-scene.js',

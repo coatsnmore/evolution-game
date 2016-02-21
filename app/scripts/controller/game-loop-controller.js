@@ -11,6 +11,9 @@ PixiGame.GameLoopController.prototype.update = function() {
         return;
     }
 
+    //global physics things
+    PixiGame.world.step(1 / this._fps);
+
     PixiGame.renderer.render(PixiGame.stage);
     PixiGame.sceneController.update();
 };
