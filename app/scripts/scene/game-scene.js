@@ -31,36 +31,29 @@ PixiGame.GameScene.constructor = PixiGame.GameScene;
 PixiGame.GameScene.prototype = Object.create(PIXI.Graphics.prototype);
 
 PixiGame.GameScene.prototype.setup = function() {
-
   this.setupPlayer();
   this.setupEnemies();
-  // this.setupPlayerBullets();
-  // this.setupBullets();
 };
 
 PixiGame.GameScene.prototype.playerFire = function() {
-
-  // console.log('player fire');
-  // var x = this._player.body.position[0];
-  // var y = this._player.body.position[1];
   var magnitude = this._player.speed * 1.5,
     angle = this._player.body.angle - Math.PI / 2;
 
   var bullet = {
     graphics: new PIXI.Graphics(),
     body: new p2.Body({
-      mass: 0.1,
+      mass: 0,
       damping: 0,
       angularDamping: 0
     }),
     active: false
   };
+
   // adjust physics
   bullet.body.velocity[0] += magnitude * Math.cos(angle) + this._player.body.velocity[0];
   bullet.body.velocity[1] += magnitude * Math.sin(angle) + this._player.body.velocity[1];
   bullet.body.position[0] = (this._player.size / 2) * Math.cos(angle) + this._player.body.position[0];
   bullet.body.position[1] = (this._player.size / 2) * Math.sin(angle) + this._player.body.position[1];
-
 
   // Create bullet shape
   var bulletShape = new p2.Circle({
@@ -68,12 +61,7 @@ PixiGame.GameScene.prototype.playerFire = function() {
   });
   // bulletShape.collisionGroup = BULLET;
   // bulletShape.collisionMask = ASTEROID;
-
   bullet.body.addShape(bulletShape);
-
-
-  // Give it initial velocity in the ship direction
-
   PixiGame.world.addBody(bullet.body);
 
   // Keep track of the last time we shot
@@ -88,7 +76,6 @@ PixiGame.GameScene.prototype.playerFire = function() {
   bullet.graphics.drawRect(0, 0, this._player.bullets.size, this._player.bullets.size);
   bullet.graphics.drawCircle(0, 0, this._player.bullets.size);
   bullet.graphics.endFill();
-  bullet.graphics.alpha = 1;
   this.addChild(bullet.graphics);
 
   this._player.bullets.collection.push(bullet);
@@ -130,46 +117,6 @@ PixiGame.GameScene.prototype.setupEnemies = function() {
     this.addChild(enemy.graphicsContainer);
 
     enemies.collection.push(enemy);
-  }
-};
-
-PixiGame.GameScene.prototype.setupBullets = function() {
-  var player = this._player;
-  var x = player.body.position[0],
-    y = player.body.position[1];
-
-  for (var i = 0; i < 10; i++) {
-    // x += 50;
-    //physics
-    var bullet = {
-      graphics: new PIXI.Graphics(),
-      body: new p2.Body({
-        mass: 0,
-        angularVelocity: 0,
-        damping: 0,
-        angularDamping: 0,
-        position: [x, y]
-      }),
-      active: false
-    };
-
-    //shapes
-    var bulletShape = new p2.Box({
-      width: 1,
-      height: 1
-    });
-    // bullet.body.addShape(bulletShape);
-    PixiGame.world.addBody(bullet.body);
-
-    //graphics
-    bullet.graphics.beginFill(0xFFFFFF);
-    bullet.graphics.lineStyle(1, 0xFF0000);
-    bullet.graphics.drawRect(x, y, player.bullets.size, player.bullets.size);
-    bullet.graphics.endFill();
-    bullet.graphics.alpha = 0;
-    this.addChild(bullet.graphics);
-
-    player.bullets.collection.push(bullet);
   }
 };
 
@@ -261,6 +208,22 @@ PixiGame.GameScene.prototype.setupPlayer = function() {
 
   player.graphics.addChildAt(shipEngine, 1);
 
+  var playerShield = new PIXI.Graphics();
+  playerShield.beginFill(0xF7ED60);
+  playerShield.drawCircle(player.size / 2, player.size / 2, player.size);
+  playerShield.endFill();
+  playerShield.alpha = 0.1;
+
+  player.graphics.addChildAt(playerShield, 2);
+
+  var hitShield = new PIXI.Graphics();
+  hitShield.beginFill(0xCF4061);
+  hitShield.drawCircle(player.size / 2, player.size / 2, player.size);
+  hitShield.endFill();
+  hitShield.alpha = 0.0;
+
+  player.graphics.addChildAt(hitShield, 3);
+
   player.graphics.pivot.x = player.size / 2;
   player.graphics.pivot.y = player.size / 2;
   this.addChild(player.graphics);
@@ -276,30 +239,13 @@ PixiGame.GameScene.prototype.update = function() {
 
   //player fire
   if (controls.fire) {
-    // console.log('fire');
-    // bullets[0].active = true;
-    // bullets[0].body.position[0] = player.body.position[0];
-    // bullets[0].body.position[1] = player.body.position[1];
-    // bullets[0].body.velocity = [5, 5];
-    // bullets[0].body.angularVelocity = 0;
-    //
-    // console.log('player.body.position[0]: ' + player.body.position[0]);
-    // bullets[0].graphics.x = player.body.position[0];
-    // bullets[0].graphics.x = player.body.position[1];
-    // bullets[0].graphics.alpha = 1;
+    //todo maintain a counter to control fire rate
     this.playerFire();
-  } else {
-    // bullets[0].graphics.alpha = 0;
   }
 
   // move bullets
   for (var j = 0; j < bullets.length; j++) {
     var bullet = bullets[j];
-    // console.log('bullet.body.position[0]: ' + bullet.body.position[0]);
-    if (controls.fire) {
-      console.log('bullet.body.position[0]: ' + bullet.body.position[0]);
-      console.log('player.body.x: ' + this._player.body.position[0]);
-    }
     bullet.graphics.x = bullet.body.position[0];
     bullet.graphics.y = bullet.body.position[1];
   }
@@ -307,6 +253,16 @@ PixiGame.GameScene.prototype.update = function() {
   // move enemies
   for (var i = 0; i < enemies.length; i++) {
     var enemy = enemies[i];
+
+    // move towards player
+    var dx = Math.abs(enemy.body.position[0] - player.body.position[0]);
+    var dy = Math.abs(enemy.body.position[1] - player.body.position[1]);
+    var playerAngle = Math.atan(dy / dx);
+
+    var enemyAngle = playerAngle + Math.PI / 2;
+    // enemy.body.force[0] = this._enemies.speed * Math.cos(enemyAngle);
+    // enemy.body.force[1] = this._enemies.speed * Math.sin(enemyAngle);
+
     enemy.graphicsContainer.x = enemy.body.position[0];
     enemy.graphicsContainer.y = enemy.body.position[1];
   }
@@ -350,6 +306,25 @@ PixiGame.GameScene.prototype.update = function() {
   player.graphics.x = player.body.position[0];
   player.graphics.y = player.body.position[1];
   player.graphics.rotation = player.body.angle;
+
+  // handle collision
+  PixiGame.world.on('beginContact', function(e) {
+
+    //player
+    if (e.bodyB.id === player.body.id) {
+      var hitShield = player.graphics.getChildAt(3);
+      hitShield.alpha = 0.25;
+    }
+  }.bind(this));
+
+  PixiGame.world.on('endContact', function(e) {
+
+    //player
+    if (e.bodyB.id === player.body.id) {
+      var hitShield = player.graphics.getChildAt(3);
+      hitShield.alpha = 0;
+    }
+  }.bind(this));
 };
 
 PixiGame.GameScene.prototype.destroy = function() {

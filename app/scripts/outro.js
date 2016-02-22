@@ -25,7 +25,3 @@ document.addEventListener('DOMContentLoaded', function() {
 	PixiGame.gameLoopController = new PixiGame.GameLoopController();
 	PixiGame.gameLoopController.start();
 });
-
-function setupControls(){
-
-}
