@@ -30,7 +30,7 @@ PixiGame.GameLoopController.prototype.start = function() {
 
     // Create the game loop
     // this._updateInterval = setInterval(function() {
-        this.tick();
+    this.tick();
     // }.bind(this), 1000 / this._fps);
 
 };
