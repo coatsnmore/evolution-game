@@ -15,5 +15,6 @@
   "unused": false,
   "strict": false,
   "predef": ["document", "PixiGame", "PIXI", "p2", "window"],
-  "-W097": false
+  "-W097": false,
+  "-W003": false
 }

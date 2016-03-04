@@ -18,4 +18,5 @@ PixiGame.sceneController = null;
 // Physics
 PixiGame.world = null;
 
+// Controls
 PixiGame.controls = null;

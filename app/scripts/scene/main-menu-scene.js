@@ -9,6 +9,17 @@ PixiGame.MainMenuScene.constructor = PixiGame.MainMenuScene;
 PixiGame.MainMenuScene.prototype = Object.create(PIXI.Graphics.prototype);
 
 PixiGame.MainMenuScene.prototype.setup = function() {
+
+  // game title
+  var scoreText = new PIXI.Text('Evolution', {
+    font: '48px Arial',
+    fill: 0xff1010,
+    align: 'center',
+  });
+  scoreText.x = PixiGame.width / 2 - 30;
+  scoreText.y = PixiGame.height / 2 - 100;
+  this.addChildAt(scoreText, 0);
+
     this._playButton = new PIXI.Sprite.fromImage('images/game/play-game-btn.png');
     this._playButton.anchor = new PIXI.Point(0.5, 0.5);
     this._playButton.position.x = PixiGame.width / 2;

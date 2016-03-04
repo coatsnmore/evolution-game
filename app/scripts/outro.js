@@ -23,6 +23,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // load initial scene
     PixiGame.sceneController = new PixiGame.SceneController(PixiGame.MainMenuScene);
 
+    // Game state
+    PixiGame.score = 0;
+    PixiGame.highScore = 0;
+
     // start game
     PixiGame.gameLoopController = new PixiGame.GameLoopController();
     PixiGame.gameLoopController.start();
