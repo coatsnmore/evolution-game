@@ -20,32 +20,32 @@ PixiGame.EndGameScene.prototype.setup = function() {
 
     // display previous player score
     var scoreText = new PIXI.Text('Current Score: ' + PixiGame.score, {
-      font: '24px Arial',
-      fill: 0xff1010,
-      align: 'center',
+        font: '24px Arial',
+        fill: 0xff1010,
+        align: 'center',
     });
     scoreText.x = PixiGame.width / 2 - 30;
     scoreText.y = PixiGame.height / 2 - 100;
     this.addChildAt(scoreText, 0);
 
     // high score
-    if (PixiGame.score > PixiGame.highScore){
-      PixiGame.highScore = PixiGame.score;
-      var newHighScoreText = new PIXI.Text('New High Score!', {
-        font: '24px Arial',
-        fill: 0xff1010,
-        align: 'center',
-      });
-      newHighScoreText.x = PixiGame.width / 2 - 30;
-      newHighScoreText.y = PixiGame.height / 2 - 150;
-      this.addChildAt(newHighScoreText, 0);
+    if (PixiGame.score > PixiGame.highScore) {
+        PixiGame.highScore = PixiGame.score;
+        var newHighScoreText = new PIXI.Text('New High Score!', {
+            font: '24px Arial',
+            fill: 0xff1010,
+            align: 'center',
+        });
+        newHighScoreText.x = PixiGame.width / 2 - 30;
+        newHighScoreText.y = PixiGame.height / 2 - 150;
+        this.addChildAt(newHighScoreText, 0);
     }
 
 
     var highScoreText = new PIXI.Text('High Score: ' + PixiGame.score, {
-      font: '24px Arial',
-      fill: 0xff1010,
-      align: 'center',
+        font: '24px Arial',
+        fill: 0xff1010,
+        align: 'center',
     });
     highScoreText.x = PixiGame.width / 2 - 30;
     highScoreText.y = PixiGame.height / 2 - 200;
