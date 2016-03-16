@@ -1,11 +1,11 @@
 PixiGame.CombatScene = function() {
   PIXI.Graphics.call(this);
 
-  this._player1 = {
+  this._player = {
     health: 100
   };
 
-  this._player2 = {
+  this._enemy = {
     health: 100
   };
 
@@ -33,39 +33,40 @@ PixiGame.CombatScene.prototype = Object.create(PIXI.Graphics.prototype);
 PixiGame.CombatScene.prototype.setup = function() {
   this.setupTurn();
   this.setupCombat();
-  this.setupHealth();
+  this.setupPlayerHealth();
+  this.setupEnemyHealth();
   this.setupLog();
 };
 
-PixiGame.CombatScene.prototype.setupTurn = function(){
+PixiGame.CombatScene.prototype.setupTurn = function() {
 
-    //player goes first
-    this._playerTurn = true;
+  //player goes first
+  this._playerTurn = true;
 
-    var displayText = 'Turn: ';
-    var turnText;
-    this._turn.draw = function() {
-      turnText = new PIXI.Text(displayText + 'Player', {
-        font: '24px Arial',
-        fill: 'red',
-        align: 'center'
-      });
-      turnText.x = PixiGame.width * 2 / 3;
-      turnText.y = PixiGame.height - 50;
-      this.addChild(turnText);
-    }.bind(this);
+  var displayText = 'Turn: ';
+  var turnText;
+  this._turn.draw = function() {
+    turnText = new PIXI.Text(displayText + 'Player', {
+      font: '24px Arial',
+      fill: 'red',
+      align: 'center'
+    });
+    turnText.x = PixiGame.width * 2 / 3;
+    turnText.y = PixiGame.height - 50;
+    this.addChild(turnText);
+  }.bind(this);
 
-    this._turn.draw();
+  this._turn.draw();
 
-    this._turn.update = function(isPlayerTurn) {
-      if(isPlayerTurn){
-        turnText.text = 'Player';
-        this._combatContainer.active(true);
-      } else {
-        turnText.text = 'Enemy';
-        this._combatContainer.active(false);
-      }
-    }.bind(this);
+  this._turn.update = function(isPlayerTurn) {
+    if (isPlayerTurn) {
+      turnText.text = displayText + 'Player';
+      this._combatContainer.active(true);
+    } else {
+      turnText.text = displayText + 'Enemy';
+      this._combatContainer.active(false);
+    }
+  }.bind(this);
 };
 
 PixiGame.CombatScene.prototype.setupLog = function() {
@@ -89,28 +90,53 @@ PixiGame.CombatScene.prototype.setupLog = function() {
   }.bind(this);
 };
 
-PixiGame.CombatScene.prototype.setupHealth = function() {
-  var player1HealthText;
+PixiGame.CombatScene.prototype.setupPlayerHealth = function() {
+  var playerHealthText;
   var displayText = 'Player 1 Health: ';
-  this._player1.healthDraw = function() {
-    player1HealthText = new PIXI.Text(displayText + this._player1.health, {
+  this._player.healthDraw = function() {
+    playerHealthText = new PIXI.Text(displayText + this._player.health, {
       font: '24px Arial',
       fill: 'red',
       align: 'center'
     });
-    player1HealthText.x = 25;
-    player1HealthText.y = 25;
-    this.addChild(player1HealthText);
+    playerHealthText.x = 25;
+    playerHealthText.y = 25;
+    this.addChild(playerHealthText);
   }.bind(this);
   //
-  this._player1.healthDraw();
+  this._player.healthDraw();
 
-  this._player1.updateHealth = function(damage) {
+  this._player.updateHealth = function(damage) {
 
     //damage
-    this._player1.health -= damage;
-    player1HealthText.text = displayText + (this._player1.health);
+    this._player.health -= damage;
+    playerHealthText.text = displayText + (this._player.health);
     this._log.update('player damaged for ' + damage + '!!');
+  }.bind(this);
+};
+
+PixiGame.CombatScene.prototype.setupEnemyHealth = function() {
+  var enemyHealthText;
+  var displayText = 'Enemy Health: ';
+  this._enemy.healthDraw = function() {
+    enemyHealthText = new PIXI.Text(displayText + this._enemy.health, {
+      font: '24px Arial',
+      fill: 'red',
+      align: 'center'
+    });
+    enemyHealthText.x = 25;
+    enemyHealthText.y = 75;
+    this.addChild(enemyHealthText);
+  }.bind(this);
+  //
+  this._enemy.healthDraw();
+
+  this._enemy.updateHealth = function(damage) {
+
+    //damage
+    this._enemy.health -= damage;
+    enemyHealthText.text = displayText + (this._enemy.health);
+    this._log.update('enemy damaged for ' + damage + '!!');
   }.bind(this);
 };
 
@@ -195,19 +221,34 @@ PixiGame.CombatScene.prototype.handleCombatOptionTouch = function(e) {
   var min = e.target.meta.min;
   var max = e.target.meta.max;
   var damage = Math.floor(Math.random() * (max - min + 1)) + min;
-  this._player1.updateHealth(damage);
+  this._enemy.updateHealth(damage);
   // this._playerTurn = false;
   this._turn.update(false);
-  // e.target.parent.interactive = false;
+  this.enemyTurn();
+};
+
+PixiGame.CombatScene.prototype.enemyTurn = function(e) {
+
+  var attackMin = 1, attackMax = this._attacks.length;
+  var attackIndex = Math.floor(Math.random() * (attackMax - attackMin + 1)) + attackMin;
+  console.log('enemy attack: ' + (attackIndex - 1));
+  var attack = this._attacks[attackIndex - 1];
+  var min = attack.min, max = attack.max;
+  var damage = Math.floor(Math.random() * (max - min + 1)) + min;
+
+  window.setTimeout(function() {
+    this._player.updateHealth(damage);
+    this._turn.update(true);
+    // console.log('enemy turn over');
+  }.bind(this), 1000);
 };
 
 PixiGame.CombatScene.prototype.update = function() {
-  //tick
-  //move stuff
-  //handle collisions
 
-  // do enemy turn
-
+  // lose conditions
+  if(this._player.health <= 0){
+      console.log('ya lose brah');
+  }
 };
 
 PixiGame.CombatScene.prototype.gameEnd = function(event) {
