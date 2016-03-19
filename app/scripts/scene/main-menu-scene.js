@@ -10,15 +10,18 @@ PixiGame.MainMenuScene.prototype = Object.create(PIXI.Graphics.prototype);
 
 PixiGame.MainMenuScene.prototype.setup = function() {
 
-  var welcomeText = new PIXI.Text('Evolution Game Components - Experimental', {
-    font: 'bold 48px Lucia Console',
-    fill: 'blue',
+  var menuWidth = PixiGame.width / 3;
+  var optionSizeY = 60;
+
+  var welcomeText = new PIXI.Text('Evolution Game Components', {
+    font: 'bold 48px Arial',
+    fill: 0xFFFFFF,
     align: 'center',
+    wordWrap: true,
+    wordWrapWidth: menuWidth
   });
-  welcomeText.x = PixiGame.width / 3;
+  welcomeText.x = menuWidth;
   welcomeText.y = 10;
-  welcomeText.wordWrap = true;
-  welcomeText.wordWrapWidth = 100;
   this.addChild(welcomeText);
 
   var options = [{
@@ -32,15 +35,13 @@ PixiGame.MainMenuScene.prototype.setup = function() {
     action: this.handleCombatPlayButtonPressed.bind(this)
   }];
 
-  var optionSizeY = 60;
-  var optionSizeX = PixiGame.width / 3;
-
   var optionsContainer = new PIXI.Container();
   for (var oi = 0; oi < options.length; oi++) {
-    var option = Utils.OptionFactory.createOption(options[oi], oi, optionSizeY, optionSizeX, 'menu');
+    var option = Utils.OptionFactory.createOption(options[oi], oi, optionSizeY, menuWidth, 'menu');
     optionsContainer.addChild(option);
   }
 
+  // position menu
   optionsContainer.x = PixiGame.width / 3;
   optionsContainer.y = PixiGame.height / 3;
   this.addChild(optionsContainer);
