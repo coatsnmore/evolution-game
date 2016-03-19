@@ -5,11 +5,12 @@ Utils.OptionFactory = (function() {
   var createOption = function(option, index, optionSizeY, optionSizeX, type) {
     var optionLineSize = 5;
     var optionContainer = new PIXI.Container();
+    var colors = Utils.Colors.options;
 
     // box
     var optionBox = new PIXI.Graphics();
     optionBox.beginFill(0xFFFFFF);
-    optionBox.lineStyle(optionLineSize, textColor(type).box);
+    optionBox.lineStyle(optionLineSize, colors(type).box);
     optionBox.drawRect(0, 0, optionSizeX, optionSizeY - optionLineSize);
     optionBox.endFill();
     optionBox.y = optionSizeY * index;
@@ -18,7 +19,7 @@ Utils.OptionFactory = (function() {
     // text
     var optionText = new PIXI.Text(option.text, {
       font: 'bold 20px Arial',
-      fill: textColor(type).font,
+      fill: colors(type).font,
       align: 'center'
     });
 
@@ -37,32 +38,6 @@ Utils.OptionFactory = (function() {
     optionContainer.meta = option;
 
     return optionContainer;
-  };
-
-  var textColor = function(type) {
-    var color = {};
-    switch(type){
-      case 'attack':
-        color.font = 0xE34242;
-        color.box = 0xE34242;
-        break;
-      case 'conversation':
-        color.font = 0x4267E3;
-        color.box = 0x4267E3;
-        break;
-      case 'menu':
-        color.font = 0x353D57;
-        color.box = 0x000000;
-        break;
-      case 'trade':
-        color.font = 0x3C8025;
-        color.box = 0x3C8025;
-        break;
-      default:
-        color.font = 0x000000;
-        color.box = 0x000000;
-    }
-    return color;
   };
 
   return {

@@ -1,15 +1,19 @@
 PixiGame.CombatScene = function() {
   PIXI.Graphics.call(this);
 
-  this._menuWidth = 100;
-  PixiGame.BaseScene.drawMenu(this, this._menuWidth);
+  this._menu = PixiGame.BaseScene.menu(this);
+  this._log = PixiGame.BaseScene.log(this);
 
   this._player = {
-    health: 100
+    name: 'Player',
+    health: 100,
+    maxHealth: 100,
   };
 
   this._enemy = {
-    health: 100
+    name: 'Enemy',
+    health: 100,
+    maxHealth: 100
   };
 
   this._attacks = [{
@@ -29,7 +33,6 @@ PixiGame.CombatScene = function() {
     action: this.handleCombatOptionTouch.bind(this)
   }];
 
-  this._log = {};
   this._turn = {};
   this._combatContainer = {};
 
@@ -43,9 +46,8 @@ PixiGame.CombatScene.prototype = Object.create(PIXI.Graphics.prototype);
 PixiGame.CombatScene.prototype.setup = function() {
   this.setupTurn();
   this.setupCombat();
-  this.setupPlayerHealth();
-  this.setupEnemyHealth();
-  this.setupLog();
+  this.setupAllHealth();
+  // this.setupLog();
 };
 
 PixiGame.CombatScene.prototype.setupTurn = function() {
@@ -79,98 +81,75 @@ PixiGame.CombatScene.prototype.setupTurn = function() {
   }.bind(this);
 };
 
-PixiGame.CombatScene.prototype.setupLog = function() {
-  var logDamageText;
-  var logActionText;
-  // var  = 'Log: ';
-  this._log.drawDamage = function() {
-    logDamageText = new PIXI.Text('', {
-      font: '24px Arial',
-      fill: 'red',
-      align: 'center'
-    });
-    logDamageText.x = 100;
-    logDamageText.y = PixiGame.height - 50;
-    this.addChild(logDamageText);
-  }.bind(this);
-
-  this._log.drawDamage();
-
-  this._log.updateDamage = function(logItem) {
-    logDamageText.text = logItem;
-  }.bind(this);
-
-  this._log.drawAction = function() {
-    logActionText = new PIXI.Text('', {
-      font: '24px Arial',
-      fill: 'red',
-      align: 'center'
-    });
-    logActionText.x = 100;
-    logActionText.y = PixiGame.height - 100;
-    this.addChild(logActionText);
-  }.bind(this);
-
-  this._log.drawAction();
-
-  this._log.updateAction = function(logItem) {
-    logActionText.text = logItem;
-  }.bind(this);
+PixiGame.CombatScene.prototype.setupAllHealth = function(){
+  this.setupHealth(this._player, 0);
+  this.setupHealth(this._enemy, 1);
 };
 
-PixiGame.CombatScene.prototype.setupPlayerHealth = function() {
-  var healthWidth = PixiGame.width / 3;
-  var playerHealthText;
-  var displayText = 'Player 1 Health: ';
-  this._player.healthDraw = function() {
-    playerHealthText = new PIXI.Text(displayText + this._player.health, {
+PixiGame.CombatScene.prototype.setupHealth = function(agent, index) {
+  var healthMargin = 5;
+  var healthWidth = (PixiGame.width / 3);
+  var healthX = healthWidth * (index + 1);
+  var healthHeight = 50;
+  var healthText;
+  var healthContainer = new PIXI.Container();
+  var maxHealthBox = new PIXI.Graphics();
+  var healthBox = new PIXI.Graphics();
+  agent.healthDraw = function() {
+    var colors = Utils.Colors.health();
+
+    // draw health bucket
+    maxHealthBox.beginFill(colors.max);
+    maxHealthBox.lineStyle(healthMargin, colors.border);
+    maxHealthBox.drawRect(0, 0, healthWidth, healthHeight);
+    maxHealthBox.endFill();
+    healthContainer.addChildAt(maxHealthBox, 0);
+
+    // actual health
+    healthBox.beginFill(colors.actual);
+    healthBox.lineStyle(healthMargin, colors.border);
+    healthBox.drawRect(0, 0, healthWidth, healthHeight);
+    healthBox.endFill();
+    healthContainer.addChildAt(healthBox, 1);
+
+    healthText = new PIXI.Text('' + agent.name, {
       font: '24px Arial',
-      fill: 'red',
+      fill: colors.font,
       align: 'center',
       wordWrap: true,
       wordWrapWidth: healthWidth
     });
-    playerHealthText.x = this._menuWidth;
-    playerHealthText.y = 0;
-    this.addChild(playerHealthText);
-  }.bind(this);
-  //
-  this._player.healthDraw();
 
-  this._player.updateHealth = function(damage) {
+    healthText.anchor.x = 0.5;
+    healthText.anchor.y = 0.5;
+
+
+    console.log(this._menu.sizeX);
+    healthText.x = this._menu.sizeX / 2;
+    healthText.y = this._menu.sizeY / 2;
+
+    healthContainer.addChildAt(healthText, 2);
+    healthContainer.x = healthX;
+    this.addChildAt(healthContainer, index);
+  }.bind(this);
+
+  // console.log('agent: ' + agent);
+  agent.healthDraw();
+
+  agent.updateHealth = function(damage) {
 
     //damage
-    this._player.health -= damage;
-    playerHealthText.text = displayText + (this._player.health);
-    this._log.updateDamage('player damaged for ' + damage + '!!');
-  }.bind(this);
-};
+    agent.health -= damage;
+    // console.log(agent.name + ' health: ' + agent.health);
 
-PixiGame.CombatScene.prototype.setupEnemyHealth = function() {
-  var healthWidth = PixiGame.width / 3;
-  var enemyHealthText;
-  var displayText = 'Enemy Health: ';
-  this._enemy.healthDraw = function() {
-    enemyHealthText = new PIXI.Text(displayText + this._enemy.health, {
-      font: '24px Arial',
-      fill: 'red',
-      align: 'center',
-      wordWrap: true,
-      wordWrapWidth: healthWidth
-    });
-    enemyHealthText.x = healthWidth;
-    enemyHealthText.y = 0;
-    this.addChild(enemyHealthText);
-  }.bind(this);
-  //
-  this._enemy.healthDraw();
+    //update display
+    if(agent.health >= 0){
+      healthBox.width = agent.health / agent.maxHealth * healthWidth;
+    } else {
+      healthBox.width = 0;
+    }
+    this._log.updateDamage(agent.name + ' damaged for ' + damage + '!!');
 
-  this._enemy.updateHealth = function(damage) {
-
-    //damage
-    this._enemy.health -= damage;
-    enemyHealthText.text = displayText + (this._enemy.health);
-    this._log.updateDamage('enemy damaged for ' + damage + '!!');
   }.bind(this);
 };
 
@@ -222,6 +201,7 @@ PixiGame.CombatScene.prototype.handleCombatOptionTouch = function(e) {
 };
 
 PixiGame.CombatScene.prototype.enemyTurn = function(e) {
+  var enemyTurnTime = 500;
 
   var attackMin = 1,
     attackMax = this._attacks.length;
@@ -236,7 +216,7 @@ PixiGame.CombatScene.prototype.enemyTurn = function(e) {
     this._log.updateAction('enemy performs ' + attack.text);
     this._turn.update(true);
     // console.log('enemy turn over');
-  }.bind(this), 1000);
+  }.bind(this), enemyTurnTime);
 };
 
 PixiGame.CombatScene.prototype.update = function() {
