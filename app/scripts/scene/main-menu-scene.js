@@ -1,8 +1,8 @@
 PixiGame.MainMenuScene = function() {
-    PIXI.Graphics.call(this);
+  PIXI.Graphics.call(this);
 
-    this._playButton = null;
-    this.setup();
+  this._playButton = null;
+  this.setup();
 };
 
 PixiGame.MainMenuScene.constructor = PixiGame.MainMenuScene;
@@ -10,80 +10,75 @@ PixiGame.MainMenuScene.prototype = Object.create(PIXI.Graphics.prototype);
 
 PixiGame.MainMenuScene.prototype.setup = function() {
 
-    // game title
-    var titleText = new PIXI.Text('Evolution', {
-        font: '48px Arial',
-        fill: 0xff1010,
-        align: 'center',
-    });
-    titleText.x = PixiGame.width / 4 - 75;
-    titleText.y = PixiGame.height / 2 - 100;
-    this.addChildAt(titleText, 0);
+  var options = [{
+    text: 'Evolution',
+    action: this.handlePlayButtonPressed
+  }, {
+    text: 'RPG',
+    action: this.handleRPGPlayButtonPressed
+  }, {
+    text: 'Combat',
+    action: this.handleCombatPlayButtonPressed
+  }];
 
-    this._playButton = new PIXI.Sprite.fromImage('images/game/play-game-btn.png');
-    this._playButton.anchor = new PIXI.Point(0.5, 0.5);
-    this._playButton.position.x = PixiGame.width / 4;
-    this._playButton.position.y = PixiGame.height / 2;
-    this._playButton.interactive = true;
-    this._playButton.touchstart = this._playButton.mousedown = this.handlePlayButtonPressed.bind(this);
-    console.log('this: ' + this);
-    this.addChild(this._playButton);
+  var optionSizeY = 60;
+  var optionSizeX = PixiGame.width / 3;
 
-    // game title
-    var rpgText = new PIXI.Text('RPG', {
-        font: '48px Arial',
-        fill: 0xff1010,
-        align: 'center',
-    });
-    rpgText.x = PixiGame.width / 2 - 75;
-    rpgText.y = PixiGame.height / 2 - 100;
-    this.addChildAt(rpgText, 0);
+  var optionsContainer = new PIXI.Container();
+  for (var oi = 0; oi < options.length; oi++) {
+    // var option = this.creatOption(options[oi], oi, optionSizeY, optionSizeX);
+    var option = Utils.OptionFactory.createOption(options[oi], oi, optionSizeY, optionSizeX);
+    optionsContainer.addChild(option);
+  }
 
-    this._playButton = new PIXI.Sprite.fromImage('images/game/play-game-btn.png');
-    this._playButton.anchor = new PIXI.Point(0.5, 0.5);
-    this._playButton.position.x = PixiGame.width / 2;
-    this._playButton.position.y = PixiGame.height / 2;
-    this._playButton.interactive = true;
-    this._playButton.touchstart = this._playButton.mousedown = this.handleRPGPlayButtonPressed.bind(this);
-    console.log('this: ' + this);
-    this.addChild(this._playButton);
-
-    // basic combat
-    var combatText = new PIXI.Text('Combat', {
-        font: '48px Arial',
-        fill: 0xff1010,
-        align: 'center',
-    });
-    combatText.x = PixiGame.width * (3 /4) - 75;
-    combatText.y = PixiGame.height / 2 - 100;
-    this.addChildAt(combatText, 0);
-
-    this._playButton = new PIXI.Sprite.fromImage('images/game/play-game-btn.png');
-    this._playButton.anchor = new PIXI.Point(0.5, 0.5);
-    this._playButton.position.x = PixiGame.width * (3 /4);
-    this._playButton.position.y = PixiGame.height / 2;
-    this._playButton.interactive = true;
-    this._playButton.touchstart = this._playButton.mousedown = this.handleCombatPlayButtonPressed.bind(this);
-    console.log('this: ' + this);
-    this.addChild(this._playButton);
+  optionsContainer.x = PixiGame.width / 3;
+  optionsContainer.y = PixiGame.height / 3;
+  this.addChild(optionsContainer);
 };
+
+// PixiGame.MainMenuScene.prototype.creatOption = function(option, index, optionSizeY, optionSizeX) {
+//   var optionLineSize = 5;
+//   var optionContainer = new PIXI.Container();
+//
+//   var optionBox = new PIXI.Graphics();
+//   optionBox.beginFill(0xFFFFFF);
+//   optionBox.lineStyle(optionLineSize, 'red');
+//   optionBox.drawRect(0, 0, optionSizeX, optionSizeY - optionLineSize);
+//   optionBox.endFill();
+//   optionBox.y = optionSizeY * index;
+//   optionContainer.addChildAt(optionBox, 0);
+//
+//   var optionText = new PIXI.Text(option.text, {
+//     font: '20px Lucia Console',
+//     fill: 'red',
+//     align: 'center',
+//   });
+//   optionText.x = optionLineSize;
+//   optionText.y = optionSizeY * index + optionLineSize;
+//   optionText.wordWrap = true;
+//   optionText.wordWrapWidth = optionSizeX;
+//   optionContainer.addChildAt(optionText, 1);
+//   optionContainer.interactive = true;
+//   optionContainer.touchstart = optionContainer.mousedown = option.action;
+//   return optionContainer;
+// };
 
 
 PixiGame.MainMenuScene.prototype.handleRPGPlayButtonPressed = function(event) {
-    PixiGame.sceneController.requestSceneChange(PixiGame.RPGScene);
+  PixiGame.sceneController.requestSceneChange(PixiGame.RPGScene);
 };
 
 PixiGame.MainMenuScene.prototype.handlePlayButtonPressed = function(event) {
-    PixiGame.sceneController.requestSceneChange(PixiGame.GameScene);
+  PixiGame.sceneController.requestSceneChange(PixiGame.GameScene);
 };
 
 PixiGame.MainMenuScene.prototype.handleCombatPlayButtonPressed = function(event) {
-    PixiGame.sceneController.requestSceneChange(PixiGame.CombatScene);
+  PixiGame.sceneController.requestSceneChange(PixiGame.CombatScene);
 };
 
 PixiGame.MainMenuScene.prototype.update = function() {};
 
 PixiGame.MainMenuScene.prototype.destroy = function() {
-    this.removeChildren();
-    this._playButton = null;
+  this.removeChildren();
+  this._playButton = null;
 };

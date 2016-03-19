@@ -1,33 +1,36 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // is there a better way to find w/h? does this work on mobile?
-    PixiGame.width = document.documentElement.clientWidth;
-    PixiGame.height = document.documentElement.clientHeight;
+  // Utilities first
+  // Utils.optionFactory = new Utils.OptionFactory();
 
-    // always auto detect
-    PixiGame.renderer = new PIXI.autoDetectRenderer(PixiGame.width, PixiGame.height);
-    PixiGame.renderer.view.setAttribute('class', 'renderer');
-    document.body.appendChild(PixiGame.renderer.view);
+  // is there a better way to find w/h? does this work on mobile?
+  PixiGame.width = document.documentElement.clientWidth;
+  PixiGame.height = document.documentElement.clientHeight;
 
-    // create stage
-    PixiGame.stage = new PIXI.Container();
+  // always auto detect
+  PixiGame.renderer = new PIXI.autoDetectRenderer(PixiGame.width, PixiGame.height);
+  PixiGame.renderer.view.setAttribute('class', 'renderer');
+  document.body.appendChild(PixiGame.renderer.view);
 
-    // startup Physics
-    PixiGame.world = new p2.World({
-        gravity: [0, 0]
-    });
+  // create stage
+  PixiGame.stage = new PIXI.Container();
 
-    // startup Controls
-    PixiGame.controls = new PixiGame.Controller();
+  // startup Physics
+  PixiGame.world = new p2.World({
+    gravity: [0, 0]
+  });
 
-    // load initial scene
-    PixiGame.sceneController = new PixiGame.SceneController(PixiGame.MainMenuScene);
+  // startup Controls
+  PixiGame.controls = new PixiGame.Controller();
 
-    // Game state
-    PixiGame.score = 0;
-    PixiGame.highScore = 0;
+  // load initial scene
+  PixiGame.sceneController = new PixiGame.SceneController(PixiGame.MainMenuScene);
 
-    // start game
-    PixiGame.gameLoopController = new PixiGame.GameLoopController();
-    PixiGame.gameLoopController.start();
+  // Game state
+  PixiGame.score = 0;
+  PixiGame.highScore = 0;
+
+  // start game
+  PixiGame.gameLoopController = new PixiGame.GameLoopController();
+  PixiGame.gameLoopController.start();
 });
