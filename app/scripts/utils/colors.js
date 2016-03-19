@@ -1,6 +1,8 @@
 Utils.Colors = (function(){
   var options = function(type) {
     var color = {};
+    color.background =  0xD4CCBC;
+
     switch(type){
       case 'attack':
         color.font = 0xE34242;
@@ -11,7 +13,7 @@ Utils.Colors = (function(){
         color.box = 0x4267E3;
         break;
       case 'menu':
-        color.font = 0x353D57;
+        color.font = 0x000000;
         color.box = 0x000000;
         break;
       case 'trade':
@@ -35,5 +37,28 @@ Utils.Colors = (function(){
     return color;
   };
 
-  return {options: options, health: health};
+  var hud = function(type) {
+    var color = {
+      background: 0xD4CCBC
+    };
+    return color;
+  };
+
+  var log = function(type) {
+    var color = {
+      background: 0xD4CCBC,
+      font: 0x000000
+    };
+    return color;
+  };
+
+  var turn = function(type) {
+    var color = {
+      background: 0xD4CCBC,
+      font: 0x000000
+    };
+    return color;
+  };
+
+  return {options: options, health: health, hud: hud, log: log, turn: turn};
 })();

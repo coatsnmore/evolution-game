@@ -9,7 +9,7 @@ Utils.OptionFactory = (function() {
 
     // box
     var optionBox = new PIXI.Graphics();
-    optionBox.beginFill(0xFFFFFF);
+    optionBox.beginFill(colors(type).background);
     optionBox.lineStyle(optionLineSize, colors(type).box);
     optionBox.drawRect(0, 0, optionSizeX, optionSizeY - optionLineSize);
     optionBox.endFill();

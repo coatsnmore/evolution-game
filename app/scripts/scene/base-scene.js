@@ -1,9 +1,40 @@
 PixiGame.BaseScene = (function() {
+  var base = this;
+  var hudX = 0, hudY = 0, hudSizeX = 0, hudSizeY = 0;
+
+  var hud = function(self){
+    hudY = PixiGame.height * (2 / 3);
+    // var optionsContainer = new PIXI.Container();
+    // var optionLineSize = 5;
+    hudSizeX = this.sizeX = PixiGame.width;
+    hudSizeY = this.sizeY = PixiGame.height / 3;
+    var hudContainer = new PIXI.Container();
+    var colors = Utils.Colors.hud();
+
+    // box
+    var hudBackground = new PIXI.Graphics();
+    hudBackground.beginFill(colors.background);
+    hudBackground.lineStyle(1, colors.background);
+    hudBackground.drawRect(0, 0, this.sizeX , this.sizeY);
+    hudBackground.endFill();
+    hudContainer.addChildAt(hudBackground, 0);
+
+    // this.position = [];
+    console.log(hudX);
+    console.log(hudY);
+    hudContainer.x = hudX;
+    hudContainer.y = hudY;
+    hudContainer.alpha = 0.5;
+
+    self.addChildAt(hudContainer, 0);
+
+    return this;
+  };
 
   //horizontal
   var menu = function(self){
     this.sizeX = 100;
-    this.sizeY = 50;
+    this.sizeY = 55;
     var options = [{
       text: 'Menu',
       action: mainMenu
@@ -19,8 +50,8 @@ PixiGame.BaseScene = (function() {
 
     // position menu
     optionsContainer.x = 0;
-    optionsContainer.y = 0;
-    self.addChild(optionsContainer);
+    optionsContainer.y = PixiGame.height - this.sizeY + 5;
+    self.addChildAt(optionsContainer, 1);
     return this;
   };
 
@@ -29,18 +60,29 @@ PixiGame.BaseScene = (function() {
   };
 
   var log = function(self) {
+    var colors = Utils.Colors.log();
     var logDamageText;
     var logActionText;
-    // var  = 'Log: ';
+    var logContainer = new PIXI.Container();
+
+    // box
+    var logBox = new PIXI.Graphics();
+    logBox.beginFill(colors.background);
+    logBox.lineStyle(1, colors.background);
+    logBox.drawRect(0, 0, PixiGame.width / 3, hudSizeY / 2);
+    logBox.endFill();
+    logBox.y = 0;
+    logContainer.addChildAt(logBox, 0);
+
     this.drawDamage = function() {
       logDamageText = new PIXI.Text('', {
         font: '24px Arial',
-        fill: 'red',
+        fill: colors.font,
         align: 'center'
       });
-      logDamageText.x = 100;
-      logDamageText.y = PixiGame.height - 50;
-      self.addChild(logDamageText);
+      logDamageText.x = 0;
+      logDamageText.y = 0;
+      logContainer.addChildAt(logDamageText, 1);
     }.bind(self);
 
     this.drawDamage();
@@ -52,12 +94,12 @@ PixiGame.BaseScene = (function() {
     this.drawAction = function() {
       logActionText = new PIXI.Text('', {
         font: '24px Arial',
-        fill: 'red',
+        fill: colors.font,
         align: 'center'
       });
-      logActionText.x = 100;
-      logActionText.y = PixiGame.height - 100;
-      self.addChild(logActionText);
+      logActionText.x = 0;
+      logActionText.y = 50;
+      logContainer.addChildAt(logActionText, 2);
     }.bind(self);
 
     this.drawAction();
@@ -66,8 +108,47 @@ PixiGame.BaseScene = (function() {
       logActionText.text = logItem;
     }.bind(self);
 
+    logContainer.x = hudX;
+    logContainer.y = hudY;
+
+    self.addChild(logContainer);
+
     return this;
   };
 
-  return {menu: menu, log: log};
+  var turn = function(self) {
+    var colors = Utils.Colors.turn();
+
+    //player goes first
+    self._playerTurn = true;
+
+    var displayText = 'Turn: ';
+    var turnText;
+    this.draw = function() {
+      turnText = new PIXI.Text(displayText + 'Player', {
+        font: '24px Arial',
+        fill: colors.font,
+        align: 'center'
+      });
+      turnText.x = PixiGame.width * 2 / 3;
+      turnText.y = PixiGame.height - 50;
+      self.addChild(turnText);
+    }.bind(self);
+
+    this.draw();
+
+    this.update = function(isPlayerTurn) {
+      if (isPlayerTurn) {
+        turnText.text = displayText + 'Player';
+        self._combatContainer.active(true);
+      } else {
+        turnText.text = displayText + 'Enemy';
+        self._combatContainer.active(false);
+      }
+    }.bind(self);
+
+    return this;
+  };
+
+  return {menu: menu, log: log, hud: hud, turn: turn};
 })();

@@ -1,8 +1,10 @@
 PixiGame.CombatScene = function() {
   PIXI.Graphics.call(this);
 
+  this._hud = PixiGame.BaseScene.hud(this);
   this._menu = PixiGame.BaseScene.menu(this);
   this._log = PixiGame.BaseScene.log(this);
+  this._turn = PixiGame.BaseScene.turn(this);
 
   this._player = {
     name: 'Player',
@@ -33,7 +35,6 @@ PixiGame.CombatScene = function() {
     action: this.handleCombatOptionTouch.bind(this)
   }];
 
-  this._turn = {};
   this._combatContainer = {};
 
   //do this last
@@ -44,52 +45,21 @@ PixiGame.CombatScene.constructor = PixiGame.CombatScene;
 PixiGame.CombatScene.prototype = Object.create(PIXI.Graphics.prototype);
 
 PixiGame.CombatScene.prototype.setup = function() {
-  this.setupTurn();
+  // this.setupTurn();
   this.setupCombat();
   this.setupAllHealth();
   // this.setupLog();
 };
 
-PixiGame.CombatScene.prototype.setupTurn = function() {
-
-  //player goes first
-  this._playerTurn = true;
-
-  var displayText = 'Turn: ';
-  var turnText;
-  this._turn.draw = function() {
-    turnText = new PIXI.Text(displayText + 'Player', {
-      font: '24px Arial',
-      fill: 'red',
-      align: 'center'
-    });
-    turnText.x = PixiGame.width * 2 / 3;
-    turnText.y = PixiGame.height - 50;
-    this.addChild(turnText);
-  }.bind(this);
-
-  this._turn.draw();
-
-  this._turn.update = function(isPlayerTurn) {
-    if (isPlayerTurn) {
-      turnText.text = displayText + 'Player';
-      this._combatContainer.active(true);
-    } else {
-      turnText.text = displayText + 'Enemy';
-      this._combatContainer.active(false);
-    }
-  }.bind(this);
-};
-
 PixiGame.CombatScene.prototype.setupAllHealth = function(){
-  this.setupHealth(this._player, 0);
-  this.setupHealth(this._enemy, 1);
+  // var playerHealthX = this._menu.sizeX;
+  this.setupHealth(this._player, this._menu.sizeX, PixiGame.height - 50);
+  this.setupHealth(this._enemy, (PixiGame.width * 2 / 3), 0);
 };
 
-PixiGame.CombatScene.prototype.setupHealth = function(agent, index) {
+PixiGame.CombatScene.prototype.setupHealth = function(agent, healthX, healthY) {
   var healthMargin = 5;
   var healthWidth = (PixiGame.width / 3);
-  var healthX = healthWidth * (index + 1);
   var healthHeight = 50;
   var healthText;
   var healthContainer = new PIXI.Container();
@@ -120,17 +90,14 @@ PixiGame.CombatScene.prototype.setupHealth = function(agent, index) {
       wordWrapWidth: healthWidth
     });
 
-    healthText.anchor.x = 0.5;
-    healthText.anchor.y = 0.5;
-
-
-    console.log(this._menu.sizeX);
-    healthText.x = this._menu.sizeX / 2;
-    healthText.y = this._menu.sizeY / 2;
+    healthText.x = 5;
+    healthText.y = healthHeight / 3;
+    // healthText.y = 0;
 
     healthContainer.addChildAt(healthText, 2);
     healthContainer.x = healthX;
-    this.addChildAt(healthContainer, index);
+    healthContainer.y = healthY;
+    this.addChild(healthContainer);
   }.bind(this);
 
   // console.log('agent: ' + agent);
@@ -165,8 +132,9 @@ PixiGame.CombatScene.prototype.setupCombat = function() {
     var combatOption = Utils.OptionFactory.createOption(this._attacks[ci], ci, optionSizeY, optionSizeX, 'attack');
     combatContainer.addChildAt(combatOption, ci);
   }
-  combatContainer.x = PixiGame.width / 3;
-  combatContainer.y = PixiGame.height / 3;
+  combatContainer.x = PixiGame.width * 2 / 3;
+  combatContainer.y = PixiGame.height * 2 / 3;
+  // combatContainer.y = 50;
   this.addChild(combatContainer);
 
   combatContainer.turnActive = this._playerTurn;
