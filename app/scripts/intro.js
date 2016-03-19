@@ -7,8 +7,6 @@ var PixiGame = PixiGame || {};
 
 var Utils = Utils || {};
 
-Utils.optionFactory = null;
-
 // Used by pixi
 PixiGame.stage = null;
 PixiGame.renderer = null;

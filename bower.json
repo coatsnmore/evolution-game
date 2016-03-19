@@ -4,7 +4,7 @@
   "dependencies": {
     "howler": "~1.1.25",
     "modernizr": "~2.8.2",
-    "pixi": "~3.0.0",
+    "pixi": ">=3.0.10",
     "p2js": "~0.7.1"
   }
 }

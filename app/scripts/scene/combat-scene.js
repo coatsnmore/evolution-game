@@ -12,15 +12,18 @@ PixiGame.CombatScene = function() {
     this._attacks = [{
         text: 'laser 5 - 10',
         min: 5,
-        max: 10
+        max: 10,
+        action: this.handleCombatOptionTouch.bind(this)
     }, {
         text: 'missile 1 - 20',
         min: 1,
-        max: 20
+        max: 20,
+        action: this.handleCombatOptionTouch.bind(this)
     }, {
         text: 'sabotage 7',
         min: 7,
-        max: 7
+        max: 7,
+        action: this.handleCombatOptionTouch.bind(this)
     }];
 
     this._log = {};
@@ -166,13 +169,12 @@ PixiGame.CombatScene.prototype.setupCombat = function() {
 
     var combatX = PixiGame.width * 2 / 3;
     var combatContainer = new PIXI.Container();
+    var optionSizeY = 60;
+    var optionSizeX = PixiGame.width / 3;
 
-    // var event = new CustomEvent('build', { 'playerTurn': elem.dataset.time });
-
-    // console.log('this._attacks.length;: ' + this._attacks.length);
     for (var ci = 0; ci < this._attacks.length; ci++) {
-        // console.log('convo[i]: ' + convo[ci]);
-        var combatOption = this.createCombatOption(this._attacks[ci], ci);
+        // var combatOption = this.createCombatOption(this._attacks[ci], ci);
+        var combatOption = Utils.OptionFactory.createOption(this._attacks[ci], ci, optionSizeY, optionSizeX, 'attack');
         combatContainer.addChildAt(combatOption, ci);
     }
     combatContainer.x = combatX;
@@ -199,53 +201,12 @@ PixiGame.CombatScene.prototype.setupCombat = function() {
     this._combatContainer = combatContainer;
 };
 
-PixiGame.CombatScene.prototype.createCombatOption = function(option, index) {
-
-    // console.log('combat option: ' + option.text);
-    var optionSizeY = 60;
-    var optionSizeX = PixiGame.width / 3;
-    var optionLineSize = 5;
-    var optionContainer = new PIXI.Container();
-
-    var optionBox = new PIXI.Graphics();
-    optionBox.beginFill(0xFFFFFF);
-    optionBox.lineStyle(optionLineSize, 'red');
-    optionBox.drawRect(0, 0, optionSizeX, optionSizeY - optionLineSize);
-    optionBox.endFill();
-    optionBox.y = optionSizeY * index;
-    optionContainer.addChildAt(optionBox, 0);
-
-    var optionText = new PIXI.Text(option.text, {
-        font: '20px Lucia Console',
-        fill: 'red',
-        align: 'center',
-    });
-    optionText.x = optionLineSize;
-    optionText.y = optionSizeY * index + optionLineSize;
-    optionText.wordWrap = true;
-    optionText.wordWrapWidth = optionSizeX;
-    optionContainer.addChildAt(optionText, 1);
-
-    // console.log('this._playerTurn: ' + this._playerTurn);
-    // console.log('combatoption.this: ' + this);
-    optionContainer.interactive = this._playerTurn;
-    optionContainer.touchstart = optionContainer.mousedown = this.handleCombatOptionTouch.bind(this);
-
-    // extend option pixi container
-    // optionContainer.oid = index;
-    optionContainer.meta = option;
-
-    return optionContainer;
-};
-
-//handleCombatOptionTouch
 PixiGame.CombatScene.prototype.handleCombatOptionTouch = function(e) {
     var min = e.target.meta.min;
     var max = e.target.meta.max;
     var damage = Math.floor(Math.random() * (max - min + 1)) + min;
     this._log.updateAction('player performs ' + e.target.meta.text);
     this._enemy.updateHealth(damage);
-    // this._playerTurn = false;
     this._turn.update(false);
     this.enemyTurn();
 };
@@ -255,7 +216,6 @@ PixiGame.CombatScene.prototype.enemyTurn = function(e) {
     var attackMin = 1,
         attackMax = this._attacks.length;
     var attackIndex = Math.floor(Math.random() * (attackMax - attackMin + 1)) + attackMin;
-    // console.log('enemy attack: ' + (attackIndex - 1));
     var attack = this._attacks[attackIndex - 1];
     var min = attack.min,
         max = attack.max;
