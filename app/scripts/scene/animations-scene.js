@@ -24,26 +24,29 @@ PixiGame.AnimationsScene.prototype.controls = function() {
   var menuWidth = PixiGame.width / 5;
   var optionSizeY = 40;
   var options = [{
-      text: 'Box Right',
-      action: this._box.moveRight
-  },{
-      text: 'Box Left',
-      action: this._box.moveLeft
-  },{
-      text: 'Laser Right',
-      action: this._laser.moveRight
-  },{
-      text: 'Laser Left',
-      action: this._laser.moveLeft
-  },{
-      text: 'Play Song',
-      action: PixiGame.Synth.playSong
+    text: 'Box Twitch',
+    action: this._box.twitch
+  }, {
+    text: 'Box Right',
+    action: this._box.moveRight
+  }, {
+    text: 'Box Left',
+    action: this._box.moveLeft
+  }, {
+    text: 'Laser Right',
+    action: this._laser.moveRight
+  }, {
+    text: 'Laser Left',
+    action: this._laser.moveLeft
+  }, {
+    text: 'Play Song',
+    action: PixiGame.Synth.playSong
   }];
 
   var optionsContainer = new PIXI.Container();
   for (var oi = 0; oi < options.length; oi++) {
-      var option = Utils.OptionFactory.createOption(options[oi], oi, optionSizeY, menuWidth, 'menu');
-      optionsContainer.addChild(option);
+    var option = Utils.OptionFactory.createOption(options[oi], oi, optionSizeY, menuWidth, 'menu');
+    optionsContainer.addChild(option);
   }
 
   // position menu
@@ -105,6 +108,35 @@ PixiGame.AnimationsScene.prototype.box = function() {
       .start();
   };
 
+  box.twitch = function() {
+    var coords = {
+      x: box.x,
+      y: box.y
+    };
+    var tweenRight = new TWEEN.Tween(coords)
+      .to({
+        x: coords.x + 10,
+        y: coords.y
+      }, 300)
+      .onUpdate(function() {
+        box.x = this.x;
+        box.y = this.y;
+      });
+    var tweenLeft = new TWEEN.Tween(coords)
+      .to({
+        x: coords.x - 10,
+        y: coords.y
+      }, 300)
+      .onUpdate(function() {
+        box.x = this.x;
+        box.y = this.y;
+      });
+
+      tweenRight.chain(tweenLeft);
+      tweenLeft.chain(tweenRight);
+      tweenRight.start();
+  };
+
   return box;
 };
 
@@ -127,16 +159,16 @@ PixiGame.AnimationsScene.prototype.laser = function() {
   this.addChild(laser);
   // this._box = laser;
 
-  laser.start = function (){
+  laser.start = function() {
     laser.alpha = 1;
     PixiGame.Synth.playLaser();
   };
 
-  laser.complete = function (){
+  laser.complete = function() {
     laser.alpha = 0;
   };
 
-  laser.update = function (){
+  laser.update = function() {
     laser.x = this.x;
     laser.y = this.y;
   };

@@ -6,3 +6,5 @@ uses:
 
 * pixi.js for rendering
 * p2.js for physics
+* tween.js for Animations
+* web audio api for sound synthesis
