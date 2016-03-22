@@ -1,6 +1,8 @@
 PixiGame.RPGScene = function() {
     PIXI.Graphics.call(this);
 
+    this._menu = PixiGame.BaseScene.menu(this);
+
     this._colorMap = {
         'neutral': 0xB8D65C,
         'good': 0x5CD683,

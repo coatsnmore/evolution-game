@@ -1,6 +1,8 @@
 PixiGame.GameScene = function() {
     PIXI.Graphics.call(this);
 
+    this._menu = PixiGame.BaseScene.menu(this);
+    
     this._player = {
         score: 0,
         health: 100,

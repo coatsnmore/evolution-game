@@ -6,16 +6,18 @@ PixiGame.GameLoopController = function() {
 
 PixiGame.GameLoopController.constructor = PixiGame.GameLoopController;
 
-PixiGame.GameLoopController.prototype.tick = function() {
+PixiGame.GameLoopController.prototype.tick = function(time) {
     if (!this._isGameActive) {
         return;
     }
 
-    requestAnimationFrame(this.tick.bind(this));
+    window.requestAnimationFrame(this.tick.bind(this));
 
     // update physics
     PixiGame.sceneController.update();
     PixiGame.world.step(1 / this._fps);
+
+    TWEEN.update(time);
 
     // render
     PixiGame.renderer.render(PixiGame.stage);
