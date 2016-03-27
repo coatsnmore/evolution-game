@@ -36,6 +36,9 @@ PixiGame.MainMenuScene.prototype.setup = function() {
     }, {
         text: 'Animations',
         action: this.handleAnimations.bind(this)
+    }, {
+        text: 'Hex',
+        action: this.handleHex.bind(this)
     }];
 
     var optionsContainer = new PIXI.Container();
@@ -64,6 +67,10 @@ PixiGame.MainMenuScene.prototype.handleCombat = function(event) {
 
 PixiGame.MainMenuScene.prototype.handleAnimations = function(event) {
     PixiGame.sceneController.requestSceneChange(PixiGame.AnimationsScene);
+};
+
+PixiGame.MainMenuScene.prototype.handleHex= function(event) {
+    PixiGame.sceneController.requestSceneChange(PixiGame.HexScene);
 };
 
 PixiGame.MainMenuScene.prototype.update = function() {};
