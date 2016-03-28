@@ -69,7 +69,7 @@ PixiGame.MainMenuScene.prototype.handleAnimations = function(event) {
     PixiGame.sceneController.requestSceneChange(PixiGame.AnimationsScene);
 };
 
-PixiGame.MainMenuScene.prototype.handleHex= function(event) {
+PixiGame.MainMenuScene.prototype.handleHex = function(event) {
     PixiGame.sceneController.requestSceneChange(PixiGame.HexScene);
 };
 

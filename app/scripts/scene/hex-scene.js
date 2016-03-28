@@ -1,7 +1,8 @@
 PixiGame.HexScene = function() {
   PIXI.Graphics.call(this);
   this._menu = PixiGame.BaseScene.menu(this);
-  var tilesX = 8, tilesY = 12;
+  var tilesX = 14,
+    tilesY = 8;
 
   //init tilemap
   // var tilesArray = {};
@@ -27,8 +28,8 @@ PixiGame.HexScene.prototype.setup = function() {
 
 PixiGame.HexScene.prototype.setupHexMap = function() {
 
-  var tilesX = 8;
-  var tilesY = 12;
+  // var tilesX = 8;
+  // var tilesY = 12;
   var map = this._map;
   // var tiles = map.tiles();
 
@@ -42,24 +43,25 @@ PixiGame.HexScene.prototype.setupHexMap = function() {
     console.log('coords:  ' + hex.coords);
     hex.selected.alpha = 0.5;
     //unselect others
-    for(var i = 1; i <= tilesX; i++){
-        for(var j = 1; j<= tilesY; j++){
-          var aHex = map.tiles[''+i+j];
-          if(aHex !== hex){
-            aHex.selected.alpha = 0;
-            aHex.option.alpha = 0;
-          }
-
-          if((Math.abs(i - hex.coords[0]) <= 1) && Math.abs(j - hex.coords[1]) <= 1){
-            aHex.option.alpha = 0.25;
-          }
+    for (var x = 1; x <= map.tilesX; x++) {
+      for (var y = 1; y <= map.tilesY; y++) {
+        var aHex = map.tiles['' + x + y];
+        if (aHex !== hex) {
+          aHex.selected.alpha = 0;
+          aHex.option.alpha = 0;
         }
+
+        if ((Math.abs(x - hex.coords[0]) <= 1) && Math.abs(y - hex.coords[1]) <= 1) {
+          aHex.option.alpha = 0.25;
+        }
+      }
     }
 
   };
 
-  for (var ty = 1; ty <= tilesY; ty++) { //row
-    for (var tx = 1; tx <= tilesX; tx++) { //column
+  for (var tx = 1; tx <= map.tilesX; tx++) {
+
+    for (var ty = 1; ty <= map.tilesY; ty++) {
       var hex = new PIXI.Container();
       var hexShape = new PIXI.Graphics();
       var hexSelected = new PIXI.Graphics();
@@ -118,14 +120,15 @@ PixiGame.HexScene.prototype.setupHexMap = function() {
       hex.pivot.x = Xcenter;
       hex.pivot.y = Ycenter;
 
-      // // even row
-      if ((ty % 2) === 0) {
-        hex.x = tx * size * 3 + (size * 1.5);
-        hex.y = ty * size * Math.sqrt(3) / 2;
-      } else {
-        hex.x = tx * size * 3;
-        hex.y = ty * size * Math.sqrt(3) / 2;
+      // hex.x = tx * size * Math.sqrt(3);
+      hex.y = ty * size * Math.sqrt(3);
+      hex.x = tx * (size * 3 / 2);
+      // // even column
+      if ((tx % 2) === 0) {
+        hex.y += size * Math.sqrt(3) / 2;
       }
+
+
 
       hex.coords = [tx, ty];
       hex.interactive = true;
@@ -133,8 +136,13 @@ PixiGame.HexScene.prototype.setupHexMap = function() {
       hex.touchstart = hex.mousedown = map.selectHex.bind(this, hex);
 
       map.container.addChild(hex);
-      map.tiles[''+tx +ty] = hex;
+      map.tiles['' + tx + ty] = hex;
+
+
+      // hex.y = ty * size * Math.sqrt(3) / 2;
+      // hex.x = tx * size * 3;
     }
+
   }
   map.y = 100;
 
