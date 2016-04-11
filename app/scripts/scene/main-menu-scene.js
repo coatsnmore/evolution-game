@@ -28,8 +28,8 @@ PixiGame.MainMenuScene.prototype.setup = function() {
         text: 'Space',
         action: this.handleSpace.bind(this)
     }, {
-        text: 'Conversation',
-        action: this.handleConversation.bind(this)
+        text: 'Space Opera',
+        action: this.handleSpaceMusic.bind(this)
     }, {
         text: 'Combat',
         action: this.handleCombat.bind(this)
@@ -59,6 +59,10 @@ PixiGame.MainMenuScene.prototype.handleConversation = function(event) {
 
 PixiGame.MainMenuScene.prototype.handleSpace = function(event) {
     PixiGame.sceneController.requestSceneChange(PixiGame.GameScene);
+};
+
+PixiGame.MainMenuScene.prototype.handleSpaceMusic = function(event) {
+    PixiGame.sceneController.requestSceneChange(PixiGame.SpaceMusicScene);
 };
 
 PixiGame.MainMenuScene.prototype.handleCombat = function(event) {

@@ -45,6 +45,7 @@ module.exports = function(grunt) {
         '<%= config.app %>/scripts/scene/animations-scene.js',
         '<%= config.app %>/scripts/scene/main-menu-scene.js',
         '<%= config.app %>/scripts/scene/game-scene.js',
+        '<%= config.app %>/scripts/scene/space-music-scene.js',
         '<%= config.app %>/scripts/scene/rpg-scene.js',
         '<%= config.app %>/scripts/scene/combat-scene.js',
         '<%= config.app %>/scripts/scene/end-game-scene.js',

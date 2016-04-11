@@ -51,7 +51,22 @@ PixiGame.HexScene.prototype.setupHexMap = function() {
           aHex.option.alpha = 0;
         }
 
-        if ((Math.abs(x - hex.coords[0]) <= 1) && Math.abs(y - hex.coords[1]) <= 1) {
+        // if ((Math.abs(x - hex.coords[0]) === 0) && (Math.abs(y - hex.coords[1]) === 1) ||
+        //   (Math.abs(x - hex.coords[0]) === 1) && (Math.abs(y - hex.coords[1]) === 0)) {
+        if (((hex.coords[0] % 2 === 0) &&
+          ((x - hex.coords[0] === 0) && (y - hex.coords[1] === -1) )||
+            ((x - hex.coords[0] === -1) && (y - hex.coords[1] === 0)) ||
+            ((x - hex.coords[0] === 1) && (y - hex.coords[1] === 0)) ||
+            ((x - hex.coords[0] === -1) && (y - hex.coords[1] === 1)) ||
+            ((x - hex.coords[0] === 1) && (y - hex.coords[1] === 1)) ||
+            ((x - hex.coords[0] === 0) && (y - hex.coords[1] === 1)
+          )) || ((hex.coords[0] % 2 === 1) &&
+            ((x - hex.coords[0] === 0) && (y - hex.coords[1] === -1)) ||
+            ((x - hex.coords[0] === 1) && (y - hex.coords[1] === -1)) ||
+          ((x - hex.coords[0] === 1) && (y - hex.coords[1] === 0)) ||
+          ((x - hex.coords[0] === 0) && (y - hex.coords[1] === 1)) ||
+          ((x - hex.coords[0] === -1) && (y - hex.coords[1] === 0)) ||
+          ((x - hex.coords[0] === -1) && (y - hex.coords[1] === -1)))) {
           aHex.option.alpha = 0.25;
         }
       }
@@ -120,15 +135,12 @@ PixiGame.HexScene.prototype.setupHexMap = function() {
       hex.pivot.x = Xcenter;
       hex.pivot.y = Ycenter;
 
-      // hex.x = tx * size * Math.sqrt(3);
       hex.y = ty * size * Math.sqrt(3);
       hex.x = tx * (size * 3 / 2);
-      // // even column
+      // even column
       if ((tx % 2) === 0) {
         hex.y += size * Math.sqrt(3) / 2;
       }
-
-
 
       hex.coords = [tx, ty];
       hex.interactive = true;
