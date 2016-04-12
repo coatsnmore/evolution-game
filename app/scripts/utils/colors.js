@@ -52,6 +52,22 @@ Utils.Colors = (function() {
         return color;
     };
 
+    var space = function() {
+        var color = {
+            stars: 0xE6EBED,
+            planets: 0x48CBF7,
+            player: {
+              hull: 0xBAC6D6,
+              outline: 0x0B3542,
+              mainEngine: 0xF7ED60,
+              shield: 0xF7ED60,
+              cockpit: 0xBAA97B,
+              indicator: 0xFF673D
+            }
+        };
+        return color;
+    };
+
     var turn = function(type) {
         var color = {
             background: 0xD4CCBC,
@@ -65,6 +81,7 @@ Utils.Colors = (function() {
         health: health,
         hud: hud,
         log: log,
-        turn: turn
+        turn: turn,
+        space: space
     };
 })();

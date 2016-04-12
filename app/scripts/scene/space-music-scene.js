@@ -4,6 +4,9 @@ PixiGame.SpaceMusicScene = function() {
   this._menu = PixiGame.BaseScene.menu(this);
   this._camera = null;
   this._world = null;
+  this._background = null;
+  this._midground = null;
+  this._colors = Utils.Colors.space();
 
   this._player = {
     score: 0,
@@ -34,8 +37,13 @@ PixiGame.SpaceMusicScene = function() {
   };
 
   this._planets = {
-    planetCount: 20,
+    count: 20,
     size: 100
+  };
+
+  this._stars = {
+    count: 50,
+    size: 10
   };
 
   this._rhythmPlanet = {};
@@ -47,20 +55,35 @@ PixiGame.SpaceMusicScene.constructor = PixiGame.SpaceMusicScene;
 PixiGame.SpaceMusicScene.prototype = Object.create(PIXI.Graphics.prototype);
 
 PixiGame.SpaceMusicScene.prototype.setup = function() {
+
+  this.setupBackground();
+  // this.setupMidground();
   this.setupWorld();
   this.setupCamera();
-  this.setupPlayer();
-  this.setupPlanets();
 };
 
 PixiGame.SpaceMusicScene.prototype.setupCamera = function() {
   this._camera = new PIXI.Container();
   this.addChild(this._camera);
+  this.setupPlayer();
 };
 
 PixiGame.SpaceMusicScene.prototype.setupWorld = function() {
   this._world = new PIXI.Container();
   this.addChild(this._world);
+  this.setupPlanets();
+};
+
+PixiGame.SpaceMusicScene.prototype.setupBackground = function() {
+  this._background = new PIXI.Container();
+  this.addChild(this._background);
+  this.setupStars();
+};
+
+PixiGame.SpaceMusicScene.prototype.setupMidground = function() {
+  this._midground = new PIXI.Container();
+  this.addChild(this._midground);
+  this.setupCloseStars();
 };
 
 PixiGame.SpaceMusicScene.prototype.playerFire = function() {
@@ -78,8 +101,8 @@ PixiGame.SpaceMusicScene.prototype.playerFire = function() {
   };
 
   // adjust physics
-  bullet.body.velocity[0] += magnitude * Math.cos(angle) + this._player.body.velocity[0];
-  bullet.body.velocity[1] += magnitude * Math.sin(angle) + this._player.body.velocity[1];
+  bullet.body.velocity[0] += magnitude * Math.cos(angle);
+  bullet.body.velocity[1] += magnitude * Math.sin(angle);
   bullet.body.position[0] = (this._player.size / 2) * Math.cos(angle) + this._player.graphics.x;
   bullet.body.position[1] = (this._player.size / 2) * Math.sin(angle) + this._player.graphics.y;
   // bullet.body.position[0] = 50;
@@ -114,11 +137,18 @@ PixiGame.SpaceMusicScene.prototype.playerFire = function() {
 
 PixiGame.SpaceMusicScene.prototype.setupPlanets = function() {
 
-  for (var i = 0; i < this._planets.planetCount; i++) {
-    var r = Math.random();
+  // var gridx = PixiGame.width * (this._planets.size * 2);
+  // var gridy = PixiGame.height * (this._planets.size * 2);
 
-    var x = Math.round(Math.random() * r * (PixiGame.width * 2));
-    var y = Math.round(Math.random() * r * (PixiGame.height * 2));
+  var x = 0;
+  var y = 0;
+
+  for (var i = 0; i < this._planets.count; i++) {
+    // var x = Math.round(Math.random() * (PixiGame.width));
+    // var y = Math.round(Math.random() * (PixiGame.height));
+    x += Math.round(Math.random() * this._planets.size * 4);
+    y += Math.round(Math.random() * this._planets.size * 4);
+
 
     var planetPosition = [x, y];
     var planet = {
@@ -139,7 +169,7 @@ PixiGame.SpaceMusicScene.prototype.setupPlanets = function() {
     PixiGame.world.addBody(planet.body);
 
     var planetGraphics = new PIXI.Graphics();
-    planetGraphics.beginFill(0x7AE68A);
+    planetGraphics.beginFill(this._colors.planets);
     planetGraphics.drawCircle(0, 0, planet.size);
     planetGraphics.endFill();
     planet.graphics.addChild(planetGraphics);
@@ -149,6 +179,66 @@ PixiGame.SpaceMusicScene.prototype.setupPlanets = function() {
 
     this._rhythmPlanet = planet;
   }
+};
+
+PixiGame.SpaceMusicScene.prototype.setupStars = function() {
+
+  var stars = new PIXI.Container();
+
+  for (var i = 0; i < this._stars.count; i++) {
+
+    var x = Math.round(Math.random() * PixiGame.width);
+    var y = Math.round(Math.random() * PixiGame.height);
+    var s = Math.round(Math.random() * this._stars.size);
+    var a = Math.round(Math.random());
+
+    var star = new PIXI.Graphics();
+    star.beginFill(this._colors.stars);
+    star.lineStyle(1, this._colors.stars);
+    star.drawRect(0, 0, s, s);
+    star.endFill();
+
+    star.x = x;
+    star.y = y;
+    star.alpha = a;
+    // optionBox.y = optionSizeY * index;
+    // optionContainer.addChildAt(optionBox, 0);
+    stars.addChild(star);
+  }
+
+  // stars.alpha = 0.75;
+
+  this._background.addChild(stars);
+};
+
+PixiGame.SpaceMusicScene.prototype.setupCloseStars = function() {
+
+  var stars = new PIXI.Container();
+
+  for (var i = 0; i < this._stars.count; i++) {
+
+    var x = Math.round(Math.random() * PixiGame.width);
+    var y = Math.round(Math.random() * PixiGame.height);
+    var s = Math.round(Math.random() * this._stars.size * 2);
+    // var a = Math.round(Math.random());
+
+    var star = new PIXI.Graphics();
+    star.beginFill(this._colors.stars);
+    star.lineStyle(1, this._colors.stars);
+    star.drawRect(0, 0, s, s);
+    star.endFill();
+
+    star.x = x;
+    star.y = y;
+    star.alpha = 0.75;
+    // optionBox.y = optionSizeY * index;
+    // optionContainer.addChildAt(optionBox, 0);
+    stars.addChild(star);
+  }
+
+  // stars.alpha = 0.75;
+
+  this._midground.addChild(stars);
 };
 
 PixiGame.SpaceMusicScene.prototype.setupPlayerBullets = function() {
@@ -215,8 +305,8 @@ PixiGame.SpaceMusicScene.prototype.setupPlayer = function() {
   player.graphics = new PIXI.Container();
 
   var shipHull = new PIXI.Graphics();
-  shipHull.beginFill(0xBAC6D6);
-  // player.graphics.lineStyle(5, 0xFF0000);
+  shipHull.beginFill(this._colors.player.hull);
+  shipHull.lineStyle(1, this._colors.player.outline);
   shipHull.moveTo(0, player.size);
   shipHull.lineTo(0, player.size * (2 / 3));
   shipHull.lineTo(player.size / 2, 0);
@@ -225,26 +315,23 @@ PixiGame.SpaceMusicScene.prototype.setupPlayer = function() {
   shipHull.lineTo(player.size * (2 / 3), player.size * (2 / 3));
   shipHull.lineTo(player.size * (1 / 3), player.size * (2 / 3));
   shipHull.endFill();
-
   player.graphics.addChildAt(shipHull, 0);
 
   var shipEngine = new PIXI.Graphics();
-  shipEngine.beginFill(0xF7ED60);
+  shipEngine.beginFill(this._colors.player.mainEngine);
   // player.graphics.lineStyle(5, 0xFF0000);
   shipEngine.moveTo(player.size * (1 / 3), player.size * (2 / 3));
   shipEngine.lineTo(player.size * (2 / 3), player.size * (2 / 3));
   shipEngine.lineTo(player.size * (1 / 2), player.size);
   shipEngine.endFill();
   shipEngine.alpha = 0;
-
   player.graphics.addChildAt(shipEngine, 1);
 
   var playerShield = new PIXI.Graphics();
-  playerShield.beginFill(0xF7ED60);
+  playerShield.beginFill(this._colors.player.shield);
   playerShield.drawCircle(player.size / 2, player.size / 2, player.size);
   playerShield.endFill();
   playerShield.alpha = 0.1;
-
   player.graphics.addChildAt(playerShield, 2);
 
   var hitShield = new PIXI.Graphics();
@@ -252,17 +339,40 @@ PixiGame.SpaceMusicScene.prototype.setupPlayer = function() {
   hitShield.drawCircle(player.size / 2, player.size / 2, player.size);
   hitShield.endFill();
   hitShield.alpha = 0.0;
-
   player.graphics.addChildAt(hitShield, 3);
+
+  var cockpitSize = player.size / 4;
+  var cockpit = new PIXI.Graphics();
+  cockpit.beginFill(this._colors.player.cockpit);
+  cockpit.moveTo(player.size * (1 / 4), player.size * (1 / 2));
+  cockpit.lineTo(player.size * (1 / 2), player.size * (1 / 6));
+  cockpit.lineTo(player.size * (3 / 4), player.size * (1 / 2));
+  cockpit.endFill();
+  cockpit.alpha = 0.75;
+  player.graphics.addChildAt(cockpit, 4);
+
+  var indicator = new PIXI.Graphics();
+  indicator.beginFill(this._colors.player.indicator);
+  indicator.moveTo(0, 10);
+  indicator.lineTo(10, 0);
+  indicator.lineTo(20, 10);
+  indicator.endFill();
+  indicator.pivot.x = player.size;
+  indicator.pivot.y = player.size;
+  indicator.x = player.size / 2;
+  indicator.y = player.size / 2;
+  // indicator.
+  // indicator.alpha = 0.75;
+  player.graphics.addChildAt(indicator, 5);
 
   player.graphics.pivot.x = player.size / 2;
   player.graphics.pivot.y = player.size / 2;
 
   player.graphics.x = PixiGame.width / 2;
-    player.graphics.y = PixiGame.height / 2;
-    // this.addChild(player.graphics);
-    // PixiGame.camera.addChild(player.graphics);
-    this._camera.addChild(player.graphics);
+  player.graphics.y = PixiGame.height / 2;
+  // this.addChild(player.graphics);
+  // PixiGame.camera.addChild(player.graphics);
+  this._camera.addChild(player.graphics);
 };
 
 PixiGame.SpaceMusicScene.prototype.update = function() {
@@ -272,18 +382,27 @@ PixiGame.SpaceMusicScene.prototype.update = function() {
   var controls = PixiGame.controls.state();
   var playerEngine = player.graphics.getChildAt(1);
   var bullets = player.bullets.collection;
+  var playerIndicator = player.graphics.getChildAt(5);
+
+// playerIndicator.pivot.x = player.size * 2;
+// playerIndicator.pivot.y = player.size * 2;
+  var inAngle = Math.atan2(player.body.position[1], player.body.position[0]);
+  playerIndicator.rotation = player.graphics.rotation - inAngle;
+
+
 
   //player fire
   if (controls.fire) {
 
-    if(this._player.weaponAvailable){
+    if (this._player.weaponAvailable) {
       this._player.weaponAvailable = false;
       this.playerFire();
-    }
 
-    setTimeout(function(){
-      this._player.weaponAvailable = true;
-    }.bind(this), this._player.weaponCooldown);
+      setTimeout(function() {
+        this._player.weaponAvailable = true;
+      }.bind(this), this._player.weaponCooldown);
+
+    }
   }
 
   var warp = function(body, x, y) {
@@ -295,8 +414,6 @@ PixiGame.SpaceMusicScene.prototype.update = function() {
 
     if (y < 0) {
       body.position[1] = PixiGame.height;
-      console.log('stage pos: ' + PixiGame.stage.position.x);
-      // PixiGame.stage.position.x += 50;
     } else if (y > PixiGame.height) {
       body.position[1] = 0;
     }
@@ -364,9 +481,41 @@ PixiGame.SpaceMusicScene.prototype.update = function() {
     y = player.body.position[1];
   // warp(player.body, x, y);
 
+  var ox = this._world.x;
+  var oy = this._world.y;
+
   //update graphics
-  this._world.x = player.body.position[0];
-  this._world.y = player.body.position[1];
+  this._world.x = player.body.position[0] / 2;
+  this._world.y = player.body.position[1] / 2;
+
+
+  // midground
+  // var MIDGROUND_FACTOR = 0.25;
+  // if(ox !== 0 && oy !== 0){
+  //   var dwx = (this._world.x / ox);
+  //   var dwy = (this._world.y / ox);
+  //   if(dwx !== 1 || dwy !==  1){
+  //     // console.log('ox: ' + ox);
+  //     // console.log('world.x: ' + this._world.x);
+  //     console.log('this._midground.x: ' + this._midground.x);
+  //     console.log('this._midground.y: ' + this._midground.y);
+  //   }
+  //
+  //   this._midground.x *=  dwx;// * MIDGROUND_FACTOR;
+  //   this._midground.y *= dwy;// * MIDGROUND_FACTOR;
+  // } else {
+  //   this._midground.x = this._world.x;
+  //   this._midground.y = this._world.y;
+  // }
+
+
+
+  // console.log('oy: ' + oy);
+
+  // console.log('this._world.y: ' + this._world.y);
+  // console.log('m.x: ' + this._midground.x);
+  // console.log('m.y: ' + this._midground.y);
+
   // player.graphics.x = player.body.position[0];
   // player.graphics.y = player.body.position[1];
   player.graphics.rotation = player.body.angle;

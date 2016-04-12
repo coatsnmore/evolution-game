@@ -30,16 +30,18 @@ PixiGame.MainMenuScene.prototype.setup = function() {
     }, {
         text: 'Space Opera',
         action: this.handleSpaceMusic.bind(this)
-    }, {
-        text: 'Combat',
-        action: this.handleCombat.bind(this)
-    }, {
-        text: 'Animations',
-        action: this.handleAnimations.bind(this)
-    }, {
-        text: 'Hex',
-        action: this.handleHex.bind(this)
-    }];
+    }
+    // , {
+    //     text: 'Combat',
+    //     action: this.handleCombat.bind(this)
+    // }, {
+    //     text: 'Animations',
+    //     action: this.handleAnimations.bind(this)
+    // }, {
+    //     text: 'Hex',
+    //     action: this.handleHex.bind(this)
+    // }
+  ];
 
     var optionsContainer = new PIXI.Container();
     for (var oi = 0; oi < options.length; oi++) {
